@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nodeCron = require('node-cron');
+const path = require('path');
 const { fetchLatestEmails } = require('./src/imapService');
 const { startWorker } = require('./src/emailWorker');
 const {
@@ -21,10 +22,16 @@ const JWT_SECRET = 'your_jwt_secret'; // Секрет для JWT
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Healthcheck
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running', status: 'ok' });
+});
+
+// Handle React routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
 // User registration (одноразова реєстрація для тесту)

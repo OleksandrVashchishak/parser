@@ -30,9 +30,9 @@ app.get('/api/health', (req, res) => {
 });
 
 // Handle React routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+// });
 
 // User registration (одноразова реєстрація для тесту)
 app.post('/api/auth/register', async (req, res) => {

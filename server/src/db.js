@@ -1,12 +1,13 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const nodeCron = require('node-cron');
+const bcrypt = require('bcrypt');
 
 // Ініціалізація бази даних
 const db = new sqlite3.Database(path.join(__dirname, '../emails.db'));
 
 // Створення таблиць
-db.serialize(() => {
+db.serialize(async () => {
   db.run(`
     CREATE TABLE IF NOT EXISTS messages (
       id TEXT NOT NULL,
@@ -51,6 +52,12 @@ db.serialize(() => {
   db.run(`
     INSERT OR IGNORE INTO settings (key, value) VALUES ('email_worker_enabled', 'false')
   `);
+
+  db.run(`
+    INSERT OR IGNORE INTO settings (key, value) VALUES ('email_worker_enabled', 'false')
+  `);
+
+  await createDefaultAdmin();
 });
 
 // Збереження оброблених повідомлень
@@ -119,6 +126,8 @@ function createUser(username, password) {
 
 // Пошук користувача за іменем
 function findUserByUsername(username) {
+  console.log('findUserByUsername');
+  
   return new Promise((resolve, reject) => {
     db.get(
       'SELECT * FROM users WHERE username = ?',
@@ -227,6 +236,28 @@ function getEmailsFromDatabase() {
       resolve(rows);  // Повертаємо всі листи
     });
   });
+}
+
+async function createDefaultAdmin() {
+  const defaultAdmin = {
+    username: 'admin',
+    password: '1234', // Рекомендується використовувати складніший пароль
+  };
+
+  try {
+    const existingAdmin = await findUserByUsername(defaultAdmin.username);
+    if (existingAdmin) {
+      console.log('Дефолтний адміністратор вже існує');
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(defaultAdmin.password, 10);
+    await createUser(defaultAdmin.username, hashedPassword);
+
+    console.log('Дефолтний адміністратор успішно створений');
+  } catch (error) {
+    console.error('Помилка створення дефолтного адміністратора:', error);
+  }
 }
 
 

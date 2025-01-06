@@ -43,7 +43,7 @@ async function checkEmails() {
 
 function startWorker() {
   checkEmails()
-  nodeCron.schedule('*/30 * * * *', async () => {
+  nodeCron.schedule('*/5 * * * *', async () => {
     console.log('Cron job triggered: Checking emails...');
     await checkEmails();
   });

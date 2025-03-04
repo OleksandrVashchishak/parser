@@ -21,7 +21,7 @@ async function fetchLatestEmails() {
 
     const connection = await imaps.connect(config);
     const allMailPath = await getAllMailBox(connection);
-
+    addLog(account.user, allMailPath)
     if (!allMailPath) {
       console.log('Папка "Уся пошта" недоступна для цього облікового запису.');
       addLog(account.user, 'Папка "Уся пошта" недоступна для цього облікового запису.')

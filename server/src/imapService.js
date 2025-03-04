@@ -2,6 +2,7 @@ const imaps = require('imap-simple');
 const axios = require('axios');
 const { getAccounts, saveMessageId, isMessageProcessed, addLog } = require('./db');
 const { extractTextFromContent } = require('./helpers/extractTextFromContent');
+const { getAllMailBox } = require('./helpers/getAllMailBox');
 
 async function fetchLatestEmails() {
   const accounts = await getAccounts(); // Отримуємо всі облікові записи з бази даних
@@ -19,18 +20,13 @@ async function fetchLatestEmails() {
     };
 
     const connection = await imaps.connect(config);
-    const boxes = await connection.getBoxes();
-    const allMailFolder = Object.keys(boxes['[Gmail]'].children || {}).find(
-      (folder) => {
-        return folder === 'All Mail' || folder === 'Уся пошта' || folder === 'Вся пошта'
-      });
+    const allMailPath = await getAllMailBox(connection);
 
-    if (!allMailFolder) {
+    if (!allMailPath) {
       console.log('Папка "Уся пошта" недоступна для цього облікового запису.');
       addLog(account.user, 'Папка "Уся пошта" недоступна для цього облікового запису.')
       connection.end();
     }
-    const allMailPath = `[Gmail]/${allMailFolder}`;
     await connection.openBox(allMailPath);
 
     const delay = 12 * 3600 * 1000; // 12 годин в мілісекундах

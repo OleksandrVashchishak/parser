@@ -3,7 +3,7 @@ const axios = require('axios');
 const { getAccounts, saveMessageId, isMessageProcessed, addLog } = require('./db');
 const { extractTextFromContent } = require('./helpers/extractTextFromContent');
 const { getAllMailBox } = require('./helpers/getAllMailBox');
-
+ 
 async function fetchLatestEmails() {
   const accounts = await getAccounts(); // Отримуємо всі облікові записи з бази даних
   for (const account of accounts) {

@@ -21,6 +21,8 @@ async function fetchLatestEmails() {
 
     const connection = await imaps.connect(config);
     const allMailPath = await getAllMailBox(connection);
+    console.log(allMailPath, 'allMailPath');
+    
     addLog(account.user, allMailPath)
     if (!allMailPath) {
       console.log('Папка "Уся пошта" недоступна для цього облікового запису.');
@@ -62,7 +64,8 @@ async function fetchLatestEmails() {
       const to = header?.body?.to?.[0] || 'Невідомо';
       const date = header?.body?.date?.[0] || new Date().toISOString();
       const text = textPart ? textPart.body : 'Без тексту';
-
+console.log(header?.body?.subject?.[0] || 'Без теми');
+addLog(header?.body?.subject?.[0] || 'Без теми', `Subject`)
       const data = {
         event_type: label === '\\Sent' ? 'sent' : 'inbox',
         date,

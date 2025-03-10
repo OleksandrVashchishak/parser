@@ -1,4 +1,4 @@
-export async function getAllMailBox(connection) {
+ async function getAllMailBox(connection) {
     const boxes = await connection.getBoxes();
     
     if (boxes['[Gmail]'] && boxes['[Gmail]'].children) {
@@ -12,3 +12,5 @@ export async function getAllMailBox(connection) {
     return null; 
   }
   
+
+  module.exports = { getAllMailBox };
